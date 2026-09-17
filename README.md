@@ -56,5 +56,5 @@ Specify a license for this project (for example, MIT) to clarify how others may 
 
 ## Author
 
-Bhagya Prasad Dannina (Pandu)
+Bhagya Prasad Dannina
 Portfolio: https://bhagyaprasad.dev
