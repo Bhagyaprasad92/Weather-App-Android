@@ -41,9 +41,11 @@ import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.android.play.core.tasks.Task;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
+
+import com.aniketjain.weatherapp.network.ApiConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
     private String city = "";
     private final int REQUEST_CODE_EXTRA_INPUT = 101;
     private ActivityHomeBinding binding;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        requestQueue = Volley.newRequestQueue(this.getApplicationContext());
 
         // set navigation bar color
         setNavigationBarColor();
@@ -109,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setUpDaysRecyclerView() {
-        DaysAdapter daysAdapter = new DaysAdapter(this);
+        DaysAdapter daysAdapter = new DaysAdapter(this, requestQueue);
         binding.dayRv.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         );
@@ -194,7 +198,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setLatitudeLongitudeUsingCity(String cityName) {
         URL.setCity_url(cityName);
-        RequestQueue requestQueue = Volley.newRequestQueue(HomeActivity.this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL.getCity_url(), null, response -> {
             try {
                 LocationCord.lat = response.getJSONObject("coord").getString("lat");
@@ -212,24 +215,23 @@ public class HomeActivity extends AppCompatActivity {
     @SuppressLint("DefaultLocale")
     private void getTodayWeatherInfo(String name) {
         URL url = new URL();
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url.getLink(), null, response -> {
             try {
                 this.name = name;
-                update_time = response.getJSONObject("current").getLong("dt");
+                update_time = response.getJSONObject(ApiConstants.JSON_KEY_CURRENT).getLong("dt");
                 updated_at = new SimpleDateFormat("EEEE hh:mm a", Locale.ENGLISH).format(new Date(update_time * 1000));
 
-                condition = response.getJSONArray("daily").getJSONObject(0).getJSONArray("weather").getJSONObject(0).getInt("id");
-                sunrise = response.getJSONArray("daily").getJSONObject(0).getLong("sunrise");
-                sunset = response.getJSONArray("daily").getJSONObject(0).getLong("sunset");
-                description = response.getJSONObject("current").getJSONArray("weather").getJSONObject(0).getString("main");
+                condition = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getJSONArray("weather").getJSONObject(0).getInt("id");
+                sunrise = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getLong("sunrise");
+                sunset = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getLong("sunset");
+                description = response.getJSONObject(ApiConstants.JSON_KEY_CURRENT).getJSONArray("weather").getJSONObject(0).getString("main");
 
-                temperature = String.valueOf(Math.round(response.getJSONObject("current").getDouble("temp") - 273.15));
-                min_temperature = String.format("%.0f", response.getJSONArray("daily").getJSONObject(0).getJSONObject("temp").getDouble("min") - 273.15);
-                max_temperature = String.format("%.0f", response.getJSONArray("daily").getJSONObject(0).getJSONObject("temp").getDouble("max") - 273.15);
-                pressure = response.getJSONArray("daily").getJSONObject(0).getString("pressure");
-                wind_speed = response.getJSONArray("daily").getJSONObject(0).getString("wind_speed");
-                humidity = response.getJSONArray("daily").getJSONObject(0).getString("humidity");
+                temperature = String.valueOf(Math.round(response.getJSONObject(ApiConstants.JSON_KEY_CURRENT).getDouble("temp") - 273.15));
+                min_temperature = String.format("%.0f", response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getJSONObject("temp").getDouble("min") - 273.15);
+                max_temperature = String.format("%.0f", response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getJSONObject("temp").getDouble("max") - 273.15);
+                pressure = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getString("pressure");
+                wind_speed = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getString("wind_speed");
+                humidity = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(0).getString("humidity");
 
                 updateUI();
                 hideProgressBar();

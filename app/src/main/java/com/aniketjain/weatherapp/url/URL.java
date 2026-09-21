@@ -8,7 +8,7 @@ public class URL {
 
     public URL() {
         link = "https://api.openweathermap.org/data/2.5/onecall?exclude=minutely&lat="
-                + LocationCord.lat + "&lon=" + LocationCord.lon + "&appid=" + LocationCord.API_KEY;
+                + LocationCord.lat + "&lon=" + LocationCord.lon + "&appid=" + com.aniketjain.weatherapp.BuildConfig.OPEN_WEATHER_API_KEY;
     }
 
     public String getLink() {
@@ -17,7 +17,7 @@ public class URL {
 
 
     public static void setCity_url(String cityName) {
-        city_url = "https://api.openweathermap.org/data/2.5/weather?&q=" + cityName + "&appid=" + LocationCord.API_KEY;
+        city_url = "https://api.openweathermap.org/data/2.5/weather?&q=" + cityName + "&appid=" + com.aniketjain.weatherapp.BuildConfig.OPEN_WEATHER_API_KEY;
     }
 
     public static String getCity_url() {

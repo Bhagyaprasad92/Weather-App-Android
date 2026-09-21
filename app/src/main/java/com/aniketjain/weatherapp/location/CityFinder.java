@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CityFinder {
+    private CityFinder() {}
 
     public static void setLongitudeLatitude(Location location) {
         try {

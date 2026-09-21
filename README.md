@@ -32,10 +32,10 @@ API documentation: https://openweathermap.org/api/one-call-3
 
 1. Create an account at https://openweathermap.org/
 2. Generate a unique API key from your account dashboard
-3. Open `LocationCord.java` and add your API key:
+3. Paste your **API KEY** in the **secrets.properties** file in the root directory (create the file if it does not exist):
 
-```java
-public final static String API_KEY = "YOUR_API_KEY_HERE";
+```properties
+OPEN_WEATHER_API_KEY=YOUR_API_KEY_HERE
 ```
 
 Note: OpenWeatherMap enforces rate limits per API key on free tier accounts. Review their pricing page if you expect heavy usage.

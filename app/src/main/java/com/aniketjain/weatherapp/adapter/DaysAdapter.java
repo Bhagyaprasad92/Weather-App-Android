@@ -24,15 +24,19 @@ import com.github.ybq.android.spinkit.SpinKitView;
 
 import org.json.JSONException;
 
+import com.aniketjain.weatherapp.network.ApiConstants;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder> {
     private final Context context;
+    private final RequestQueue requestQueue;
 
-    public DaysAdapter(Context context) {
+    public DaysAdapter(Context context, RequestQueue requestQueue) {
         this.context = context;
+        this.requestQueue = requestQueue;
     }
 
     private String updated_at, min, max, pressure, wind_speed, humidity;
@@ -59,21 +63,20 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DayViewHolder>
     @SuppressLint("DefaultLocale")
     private void getDailyWeatherInfo(int i, DayViewHolder holder) {
         URL url = new URL();
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url.getLink(), null, response -> {
             try {
-                update_time = response.getJSONObject("current").getLong("dt");
+                update_time = response.getJSONObject(ApiConstants.JSON_KEY_CURRENT).getLong("dt");
                 updated_at = new SimpleDateFormat("EEEE", Locale.ENGLISH).format(new Date((update_time * 1000) + (i * 864_000_00L)));   // i=0
 
-                condition = response.getJSONArray("daily").getJSONObject(i).getJSONArray("weather").getJSONObject(0).getInt("id");
-                sunrise = response.getJSONArray("daily").getJSONObject(i).getLong("sunrise");
-                sunset = response.getJSONArray("daily").getJSONObject(i).getLong("sunset");
+                condition = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getJSONArray("weather").getJSONObject(0).getInt("id");
+                sunrise = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getLong("sunrise");
+                sunset = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getLong("sunset");
 
-                min = String.format("%.0f", response.getJSONArray("daily").getJSONObject(i).getJSONObject("temp").getDouble("min") - 273.15);
-                max = String.format("%.0f", response.getJSONArray("daily").getJSONObject(i).getJSONObject("temp").getDouble("max") - 273.15);
-                pressure = response.getJSONArray("daily").getJSONObject(i).getString("pressure");
-                wind_speed = response.getJSONArray("daily").getJSONObject(i).getString("wind_speed");
-                humidity = response.getJSONArray("daily").getJSONObject(i).getString("humidity");
+                min = String.format("%.0f", response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getJSONObject("temp").getDouble("min") - 273.15);
+                max = String.format("%.0f", response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getJSONObject("temp").getDouble("max") - 273.15);
+                pressure = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getString("pressure");
+                wind_speed = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getString("wind_speed");
+                humidity = response.getJSONArray(ApiConstants.JSON_KEY_DAILY).getJSONObject(i).getString("humidity");
 
                 updateUI(holder);
                 hideProgressBar(holder);

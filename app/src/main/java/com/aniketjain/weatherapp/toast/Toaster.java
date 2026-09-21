@@ -6,6 +6,7 @@ import com.aniketjain.roastedtoast.Toasty;
 import com.aniketjain.weatherapp.R;
 
 public class Toaster {
+    private Toaster() {}
     public static void successToast(Context context, String msg) {
         Toasty.custom(
                 context,
